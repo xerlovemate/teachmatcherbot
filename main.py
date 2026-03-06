@@ -1,35 +1,25 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
-from sqlalchemy import select, func
+
 from config import TOKEN
-from database.models import async_main, async_session
-import os
-from datetime import datetime
-from aiogram.types import FSInputFile
-from handlers import (
-    start,
-)
-import time
+from database.models import async_main
+from handlers import start, test_style, matching
 
 
 async def main():
-    
-    # Создание БД
     await async_main()
 
-    # Инициализация бота
     bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode='HTML'))
     dp = Dispatcher()
-    
-    # Инициализация всех обработчиков
+
     dp.include_routers(
         start.router,
+        test_style.router,
+        matching.router,
     )
 
-    task_polling = dp.start_polling(bot)
-
-    await asyncio.gather(task_polling)
+    await dp.start_polling(bot)
 
 
 if __name__ == '__main__':
